@@ -4,6 +4,8 @@ package peliculas;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import javax.imageio.ImageIO;
@@ -13,7 +15,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
-public class FichaPelicula {
+public class FichaPelicula implements ActionListener {
 
     private JLabel imagen = new JLabel();
     private JTextArea nombrePrecio = new JTextArea("");
@@ -36,6 +38,8 @@ public class FichaPelicula {
         descripcion.setForeground(Color.WHITE);
         descripcion.setBackground(Color.black);
     
+        botonAñadir.addActionListener(this);
+        
     }
     
     public void adpatarImagen(String path){
@@ -85,6 +89,17 @@ public class FichaPelicula {
 
     public JTextArea getNombrePrecio() {
         return nombrePrecio;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent ae) {
+        
+        if(ae.getSource() == botonAñadir){
+        
+            System.out.println(nombrePrecio.getText());
+            
+        }
+    
     }
     
 }
