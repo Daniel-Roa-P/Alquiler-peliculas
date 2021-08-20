@@ -1,12 +1,18 @@
 
 package peliculas;
 
+import Datos.DBconexion;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -19,10 +25,10 @@ public class VentanaCompra extends JFrame implements ActionListener {
 
     JLabel texto = new JLabel("Articulos a comprar");
     JLabel cuenta = new JLabel("Total a pagar: ");
-    JLabel textoUsuario = new JLabel("Ingrese su usuario");
+    JLabel textoUsuario = new JLabel("Ingrese su usuario (Nombre)");
     JLabel textoCrear = new JLabel("¿Sin usario? creelo ahora mismo");
     
-    JTextField usuario = new JTextField();
+    JTextField usuario = new JTextField("Daniel");
     JTextField nuevoUsuario = new JTextField();
     
     JScrollPane scrollListaExterno = new JScrollPane();
@@ -128,6 +134,45 @@ public class VentanaCompra extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
        
+        if(ae.getSource() == botonPagar && usuario.getText().length()!= 0){
+            
+            String id = usuario.getText();
+            
+            System.out.println(id);
+            
+            DBconexion con = new DBconexion();
+            PreparedStatement Statement;
+            
+            try {
+                
+                Statement = con.getConexion().prepareStatement("SELECT * FROM tienda.usuarios WHERE nombre = '" + id + "'");
+                ResultSet result = Statement.executeQuery();
+                
+                while(result.next()) {
+                    
+                    System.out.println(result.getString("nombre"));
+                    System.out.println(result.getInt("deuda"));
+                    System.out.println(result.getString("prestadas"));
+                    
+                }
+                
+            } catch (SQLException ex) {
+                
+                System.out.println(ex.getMessage());
+            
+            }
+            
+        } else if (ae.getSource() == botonRegistrar && nuevoUsuario.getText().length()!= 0){
+            
+            VentanaCompra compra = new VentanaCompra();
+            compra.setResizable(false);
+            compra.setBounds(0, 0, 420, 720);
+            compra.setTitle("Comprar articulos");
+
+            compra.setVisible(true);
+            
+        }
+        
     }
     
     class ElementoLista implements ActionListener {

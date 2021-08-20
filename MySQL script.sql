@@ -9,6 +9,12 @@ disponibles INT(4) NOT NULL,
 precio INT(6) NOT NULL
 );
 
+CREATE TABLE tienda.usuarios (
+nombre VARCHAR(100) PRIMARY KEY,
+deuda INT(6) NOT NULL,
+prestadas VARCHAR(10000) NOT NULL
+);
+
 INSERT tienda.peliculas (nombre,urlImagen,descripcion,categoria,disponibles,precio)
 
 VALUES ('Rapidos y Furiosos 9'
@@ -131,4 +137,22 @@ VALUES ('Rapidos y Furiosos 9'
 ,'El visionario Carroll Shelby y el conductor británico Ken Miles reciben la misión de construir un nuevo automóvil con el fin de derrocar el dominio de Ferrari en el Campeonato del Mundo de Le Mans de 1966.'
 ,'Drama'
 ,10
-,14800)
+,14800);
+
+INSERT tienda.usuarios (nombre,deuda,prestadas)
+
+VALUES ('Andres'
+,29700
+,'1917,Paternidad')
+, 
+('Laura'
+,11000
+,'El conjuro 3')
+,
+('Emil'
+,24000
+,'Rapidos y Furiosos 9,Mortal Kombat,Bad Boys para siempre')
+,
+('Daniel'
+,45600
+,'Zootopia,Shrek,Ratatoille');
