@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -36,6 +37,9 @@ public class VentanaCompra extends JFrame implements ActionListener {
     
     JButton botonPagar = new JButton("Pagar");
     JButton botonRegistrar = new JButton("Registrar y pagar");
+    
+    int factura = 0;
+    String nuevasPelis = "";
     
     VentanaCompra(){
     
@@ -110,8 +114,6 @@ public class VentanaCompra extends JFrame implements ActionListener {
         scrollListaInterno.add(texto2);
         scrollListaInterno.add(texto3);
         
-        int factura = 0;
-        
         for(int i = 0; i < carrito.size(); i++){
         
             ElementoLista e = new ElementoLista(carrito.get(i).getNombreProducto(),carrito.get(i).getPrecioProducto(), i*30);
@@ -119,6 +121,8 @@ public class VentanaCompra extends JFrame implements ActionListener {
             scrollListaInterno.add(e.nombre);
             scrollListaInterno.add(e.precio);
             scrollListaInterno.add(e.botonComprar);
+            
+            nuevasPelis = nuevasPelis + "," + e.nombre.getText();
             
             factura = factura + carrito.get(i).getPrecioProducto();
             
@@ -138,29 +142,12 @@ public class VentanaCompra extends JFrame implements ActionListener {
             
             String id = usuario.getText();
             
-            System.out.println(id);
+            actualizarUsuario(id);
+            actualizarPeliculas();
             
-            DBconexion con = new DBconexion();
-            PreparedStatement Statement;
+            carrito = new ArrayList();
             
-            try {
-                
-                Statement = con.getConexion().prepareStatement("SELECT * FROM tienda.usuarios WHERE nombre = '" + id + "'");
-                ResultSet result = Statement.executeQuery();
-                
-                while(result.next()) {
-                    
-                    System.out.println(result.getString("nombre"));
-                    System.out.println(result.getInt("deuda"));
-                    System.out.println(result.getString("prestadas"));
-                    
-                }
-                
-            } catch (SQLException ex) {
-                
-                System.out.println(ex.getMessage());
-            
-            }
+            dispose();
             
         } else if (ae.getSource() == botonRegistrar && nuevoUsuario.getText().length()!= 0){
             
@@ -175,6 +162,87 @@ public class VentanaCompra extends JFrame implements ActionListener {
         
     }
     
+    public void actualizarUsuario(String id){
+        
+        DBconexion con = new DBconexion();
+        PreparedStatement Statement;
+
+        try {
+
+            Statement = con.getConexion().prepareStatement("SELECT * FROM tienda.usuarios WHERE nombre = '" + id + "'");             
+            ResultSet result = Statement.executeQuery();
+
+            int deudaPasada = 0;
+            String peliculasAlquiladas = "";
+
+            while(result.next()) {
+
+                deudaPasada = result.getInt("deuda");
+                peliculasAlquiladas = result.getString("prestadas");
+
+            }
+
+            PreparedStatement pstm = con.getConexion().prepareStatement("update usuarios set deuda = ?, "
+                + " prestadas = ?"
+                + " where nombre = ?");
+
+            pstm.setInt(1, deudaPasada + factura);
+            pstm.setString(2, peliculasAlquiladas+nuevasPelis);
+            pstm.setString(3, id);
+
+            pstm.executeUpdate();
+
+        } catch (SQLException ex) {
+
+            System.out.println(ex.getMessage());
+
+        }
+
+        con.desconectar();
+        
+    }
+    
+    public void actualizarPeliculas(){
+        
+        DBconexion con = new DBconexion();
+        PreparedStatement Statement;
+
+        try {
+
+            for(int i = 0; i < carrito.size(); i++){
+             
+                Statement = con.getConexion().prepareStatement("SELECT * FROM tienda.peliculas WHERE nombre = '" + carrito.get(i).getNombreProducto() + "'");             
+                ResultSet result = Statement.executeQuery();
+
+                int cantidad = 0;
+                
+                while(result.next()) {
+
+                    cantidad = result.getInt("disponibles");
+
+                }
+
+                PreparedStatement pstm = con.getConexion().prepareStatement("update peliculas set disponibles = ? "
+                    + " where nombre = ?");
+
+                pstm.setInt(1, cantidad - 1);
+                pstm.setString(2, carrito.get(i).getNombreProducto());
+
+                pstm.executeUpdate();
+                
+                
+            }
+
+        } catch (SQLException ex) {
+
+            System.out.println(ex.getMessage());
+
+        }
+
+        con.desconectar();
+        
+    }
+
     class ElementoLista implements ActionListener {
 
         JLabel nombre, precio;
