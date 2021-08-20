@@ -44,6 +44,9 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
     
     Thread dezpliegue;
     
+    JButton botonComprar = new JButton("Pagar");
+    JButton botonConsultar = new JButton("Consultar movimientos");
+    
     public static void main(String[] args) throws SQLException {
         
         Peliculas catalogo = new Peliculas(); 
@@ -67,13 +70,24 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
         c.add(ventanaExterna);
         c.add(scrollFichasExterno);
         c.add(aviso);
+        c.add(botonComprar);
+        c.add(botonConsultar);
 
+        botonComprar.addActionListener(this);
+        botonComprar.setBounds(700, 620, 200, 60);
+        botonComprar.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
+        botonComprar.setBackground(Color.GREEN);
+        
+        botonConsultar.addActionListener(this);
+        botonConsultar.setBounds(950, 620, 300, 60);
+        botonConsultar.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
+        botonConsultar.setBackground(Color.ORANGE);
+        
         aviso.setBounds(20, 620, 1000, 60);
         aviso.setFont(new Font(Font.MONOSPACED, Font.BOLD, 30));
         aviso.setForeground(Color.WHITE);
         
         ventanaExterna.setBounds(0, 0, 1275, 615);
-        ventanaExterna.setBackground(Color.WHITE);
         
         ventanaInterna.setBounds(0, 0, 1250, 600);
         ventanaInterna.setPreferredSize(new Dimension(1250, 600)); 
@@ -82,10 +96,7 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
         ventanaInterna.add(scrollFichasExterno);
         
         scrollFichasExterno.setBounds(20, 100, 1230, 500);
-        scrollFichasExterno.setBackground(Color.WHITE);
         
-//        scrollFichasInterno.setBounds(0, 0, 1410, 500);
-//        scrollFichasInterno.setPreferredSize(new Dimension(1410, 450)); 
         scrollFichasInterno.setBounds(0, 0, 10000, 500);
         scrollFichasInterno.setPreferredSize(new Dimension(6000, 450)); 
         scrollFichasInterno.setBackground(new Color(33, 33, 33));
@@ -180,6 +191,17 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
+        
+        if(ae.getSource() == botonComprar){
+            
+            VentanaCompra compra = new VentanaCompra();
+            compra.setResizable(false);
+            compra.setBounds(0, 0, 420, 720);
+            compra.setTitle("Comprar articulos");
+
+            compra.setVisible(true);
+            
+        }
         
     }
 

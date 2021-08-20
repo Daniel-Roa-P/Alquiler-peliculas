@@ -137,10 +137,10 @@ public class FichaPelicula implements ActionListener {
                     precioAcumulado = carrito.get(i).getPrecioProducto() + precioAcumulado;
 
                 }
-
+                
                 disponibles--;
                 botonAñadir.setText("" + disponibles + " Disponibles - Añadir");
-                aviso.setText(carrito.size() + " articulos registrados - $ " + precioAcumulado + " - pagar");
+                aviso.setText(carrito.size() + " articulos registrados - $ " + precioAcumulado);
                 
             } else {
             
