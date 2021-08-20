@@ -45,7 +45,7 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
     Thread dezpliegue;
     
     JButton botonComprar = new JButton("Pagar");
-    JButton botonConsultar = new JButton("Consultar movimientos");
+    JButton botonConsultar = new JButton("Dashboard");
     
     public static void main(String[] args) throws SQLException {
         
@@ -192,7 +192,7 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
         
-        if(ae.getSource() == botonComprar){
+        if(ae.getSource() == botonComprar && !carrito.isEmpty()){
             
             VentanaCompra compra = new VentanaCompra();
             compra.setResizable(false);

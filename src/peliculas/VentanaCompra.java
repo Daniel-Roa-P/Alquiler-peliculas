@@ -12,11 +12,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import static peliculas.Peliculas.aviso;
@@ -29,17 +28,17 @@ public class VentanaCompra extends JFrame implements ActionListener {
     JLabel textoUsuario = new JLabel("Ingrese su usuario (Nombre)");
     JLabel textoCrear = new JLabel("¿Sin usario? creelo ahora mismo");
     
-    JTextField usuario = new JTextField("Daniel");
+    JTextField usuario = new JTextField("");
     JTextField nuevoUsuario = new JTextField();
     
     JScrollPane scrollListaExterno = new JScrollPane();
     JScrollPane scrollListaInterno = new JScrollPane();
     
-    JButton botonPagar = new JButton("Pagar");
-    JButton botonRegistrar = new JButton("Registrar y pagar");
+    JButton botonPagar = new JButton("Alquilar");
+    JButton botonRegistrar = new JButton("Registrar y Alquilar");
     
-    int factura = 0;
-    String nuevasPelis = "";
+    int factura;
+    String nuevasPelis;
     
     VentanaCompra(){
     
@@ -100,6 +99,9 @@ public class VentanaCompra extends JFrame implements ActionListener {
         
         scrollListaInterno.removeAll();
         
+        factura = 0;
+        nuevasPelis = "";
+        
         JLabel texto2 = new JLabel("Pelicula");
         JLabel texto3 = new JLabel("Precio");
         
@@ -120,7 +122,7 @@ public class VentanaCompra extends JFrame implements ActionListener {
             
             scrollListaInterno.add(e.nombre);
             scrollListaInterno.add(e.precio);
-            scrollListaInterno.add(e.botonComprar);
+            scrollListaInterno.add(e.botonRetirar);
             
             nuevasPelis = nuevasPelis + "," + e.nombre.getText();
             
@@ -140,25 +142,69 @@ public class VentanaCompra extends JFrame implements ActionListener {
        
         if(ae.getSource() == botonPagar && usuario.getText().length()!= 0){
             
-            String id = usuario.getText();
+            if(verificarExistencia(usuario.getText())){
             
-            actualizarUsuario(id);
-            actualizarPeliculas();
+                crearNuevoUsusario();
+                actualizarPeliculas();
+
+                aviso.setText("0 articulos registrados - $ 0");
+                carrito = new ArrayList();
+
+                dispose();
+                
+            } else {
             
-            carrito = new ArrayList();
-            
-            dispose();
+                JFrame f = new JFrame();   
+                JOptionPane.showMessageDialog(f,"El usuario no existe.","Alert",JOptionPane.WARNING_MESSAGE);     
+           
+            }
             
         } else if (ae.getSource() == botonRegistrar && nuevoUsuario.getText().length()!= 0){
             
-            VentanaCompra compra = new VentanaCompra();
-            compra.setResizable(false);
-            compra.setBounds(0, 0, 420, 720);
-            compra.setTitle("Comprar articulos");
+            if(verificarId(nuevoUsuario.getText())){
+            
+                crearNuevoUsusario();
+                actualizarPeliculas();
 
-            compra.setVisible(true);
+                aviso.setText("0 articulos registrados - $ 0");
+                carrito = new ArrayList();
+
+                dispose();
+                
+            } else {
+            
+                JFrame f = new JFrame();   
+                JOptionPane.showMessageDialog(f,"El usuario ya existe.","Alert",JOptionPane.WARNING_MESSAGE); 
+                
+            }
             
         }
+        
+    }
+    
+    public void crearNuevoUsusario(){
+        
+        DBconexion con = new DBconexion();
+        PreparedStatement Statement;
+        
+        try {
+            
+            PreparedStatement pstm = con.getConexion().prepareStatement("insert into usuarios (nombre, "
+                    + " deuda,"
+                    + " prestadas) "
+                    + " values(?,?,?)");
+            
+            pstm.setString(1, nuevoUsuario.getText());
+            pstm.setInt(2, factura);
+            pstm.setString(3, nuevasPelis.substring(1, nuevasPelis.length()));
+
+            pstm.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        
+        con.desconectar();
         
     }
     
@@ -187,7 +233,7 @@ public class VentanaCompra extends JFrame implements ActionListener {
                 + " where nombre = ?");
 
             pstm.setInt(1, deudaPasada + factura);
-            pstm.setString(2, peliculasAlquiladas+nuevasPelis);
+            pstm.setString(2, peliculasAlquiladas + nuevasPelis);
             pstm.setString(3, id);
 
             pstm.executeUpdate();
@@ -243,10 +289,74 @@ public class VentanaCompra extends JFrame implements ActionListener {
         
     }
 
+    boolean verificarId(String id){
+        
+        DBconexion con = new DBconexion();
+        PreparedStatement Statement;
+        
+        try {
+
+            Statement = con.getConexion().prepareStatement("SELECT * FROM tienda.usuarios");             
+            ResultSet result = Statement.executeQuery();
+
+            while(result.next()) {
+
+                if(id.equals(result.getString("nombre"))){
+                
+                    return false;
+                    
+                }
+
+            }
+
+        } catch (SQLException ex) {
+
+            System.out.println(ex.getMessage());
+
+        }
+        
+        con.desconectar();
+            
+        return true;
+        
+    }
+    
+    boolean verificarExistencia(String id){
+        
+        DBconexion con = new DBconexion();
+        PreparedStatement Statement;
+        
+        try {
+
+            Statement = con.getConexion().prepareStatement("SELECT * FROM tienda.usuarios");             
+            ResultSet result = Statement.executeQuery();
+
+            while(result.next()) {
+
+                if(id.equals(result.getString("nombre"))){
+                
+                    return true;
+                    
+                }
+
+            }
+
+        } catch (SQLException ex) {
+
+            System.out.println(ex.getMessage());
+
+        }
+        
+        con.desconectar();
+            
+        return false;
+        
+    }
+    
     class ElementoLista implements ActionListener {
 
         JLabel nombre, precio;
-        JButton botonComprar = new JButton("X");
+        JButton botonRetirar = new JButton("X");
         
         ElementoLista(String nombre, int precio, int y){
         
@@ -258,19 +368,19 @@ public class VentanaCompra extends JFrame implements ActionListener {
             
             this.nombre.setForeground(Color.WHITE);
             this.precio.setForeground(Color.WHITE);
-            botonComprar.setForeground(Color.WHITE);
+            botonRetirar.setForeground(Color.WHITE);
             
-            botonComprar.setBackground(Color.RED);
-            botonComprar.setBounds(270,50 + y,45,20);
+            botonRetirar.setBackground(Color.RED);
+            botonRetirar.setBounds(270,50 + y,45,20);
             
-            botonComprar.addActionListener(this);
+            botonRetirar.addActionListener(this);
             
         }
         
         @Override
         public void actionPerformed(ActionEvent ae) {
             
-            if(ae.getSource()== botonComprar){
+            if(ae.getSource()== botonRetirar){
             
                 System.out.println(nombre.getText());
                 
@@ -280,7 +390,7 @@ public class VentanaCompra extends JFrame implements ActionListener {
                     
                     if(carrito.get(x).getNombreProducto().equals(nombre.getText())){
                         
-                        carrito.remove(carrito.get(x));
+                        carrito.remove(x);
                         break;
                     }
                     
