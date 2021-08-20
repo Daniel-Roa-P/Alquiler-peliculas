@@ -14,11 +14,11 @@ import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -27,6 +27,9 @@ import javax.swing.WindowConstants;
 
 public class Peliculas extends JFrame implements Runnable, ActionListener {
 
+    public static ArrayList<Articulo> carrito = new ArrayList();
+    public static JLabel aviso = new JLabel("0 articulos registrados - $ 0");
+    
     JScrollPane ventanaExterna = new JScrollPane();
     JScrollPane ventanaInterna = new JScrollPane();
     
@@ -38,7 +41,7 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
     JComboBox categorias = new JComboBox();
     
     JLabel textoSeleccion = new JLabel("Seleccione la categoria deseada");
-
+    
     Thread dezpliegue;
     
     public static void main(String[] args) throws SQLException {
@@ -63,7 +66,12 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
         
         c.add(ventanaExterna);
         c.add(scrollFichasExterno);
+        c.add(aviso);
 
+        aviso.setBounds(20, 620, 1000, 60);
+        aviso.setFont(new Font(Font.MONOSPACED, Font.BOLD, 30));
+        aviso.setForeground(Color.WHITE);
+        
         ventanaExterna.setBounds(0, 0, 1275, 615);
         ventanaExterna.setBackground(Color.WHITE);
         
@@ -126,10 +134,12 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
         
         ventanaExterna.setViewportView(ventanaInterna);
         scrollFichasExterno.setViewportView(scrollFichasInterno);
-
+        
         categorias.addActionListener((ActionEvent e) -> {
             
             instruccion="SELECT * FROM tienda.peliculas";
+            dezpliegue = new Thread(this);
+            scrollFichasInterno.removeAll(); 
             
             switch (categorias.getSelectedIndex()) {
                 case 0:
@@ -162,7 +172,6 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
                     break;
             }
              
-            dezpliegue = new Thread(this);
             dezpliegue.start();
                         
         });
@@ -180,8 +189,6 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
         try{
             
             try {
-            
-                scrollFichasInterno.removeAll();
         
                 DBconexion con = new DBconexion();
 
@@ -189,17 +196,34 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
                 ResultSet result = Statement.executeQuery();
 
                 int x = 20;
-
+                categorias.setEnabled(false);
+                
                 while(result.next()) {
-
+                    
                     FichaPelicula fp = new FichaPelicula();
 
+                    fp.setPrecio(result.getInt("precio"));
+                    fp.setNombre(result.getString("nombre") );
+                    
                     fp.getNombrePrecio().setText(result.getString("nombre") + "\n$" + result.getInt("precio"));
                     fp.getDescripcion().setText(result.getString("descripcion"));
                     fp.adpatarImagen(result.getString("urlImagen"));
-
-                    fp.getBotonAñadir().setBackground(Color.CYAN);
-
+                    
+                    int cantidadActual = result.getInt("disponibles");
+                    
+                    for(int i = 0; i< carrito.size(); i++){
+                        
+                        if(carrito.get(i).getNombreProducto().equals(result.getString("nombre"))){
+                            
+                            cantidadActual--;
+                            
+                        }
+                        
+                    }
+                    
+                    fp.setDisponibles(cantidadActual);
+                    fp.getBotonAñadir().setText("" + cantidadActual + " Disponibles - Añadir");
+                    
                     fp.getNombrePrecio().setBounds(x, 20, 250, 100);
                     fp.getImagen().setBounds(x, 50, 250, 300);
                     fp.getDescripcion().setBounds(x, 340, 250, 100);
@@ -216,14 +240,13 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
    
                 }
                 
+                categorias.setEnabled(true);
                 
             } catch (SQLException ex) {
                 System.out.println(ex.getMessage());
             }
             
         }catch(Exception e){
-        
-            System.out.print("No se que poner aca :D");
             
         } 
     

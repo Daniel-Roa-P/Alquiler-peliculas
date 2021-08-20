@@ -14,6 +14,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
+import static peliculas.Peliculas.aviso;
+import static peliculas.Peliculas.carrito;
 
 public class FichaPelicula implements ActionListener {
 
@@ -21,6 +23,8 @@ public class FichaPelicula implements ActionListener {
     private JTextArea nombrePrecio = new JTextArea("");
     private JTextArea descripcion = new JTextArea("");
     private JButton botonAñadir = new JButton("Añadir");
+    private int precio, disponibles;
+    private String nombre;
     
     FichaPelicula(){
     
@@ -38,6 +42,7 @@ public class FichaPelicula implements ActionListener {
         descripcion.setForeground(Color.WHITE);
         descripcion.setBackground(Color.black);
     
+        botonAñadir.setBackground(Color.CYAN);
         botonAñadir.addActionListener(this);
         
     }
@@ -91,12 +96,58 @@ public class FichaPelicula implements ActionListener {
         return nombrePrecio;
     }
 
+    public int getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(int precio) {
+        this.precio = precio;
+    }
+
+    public int getDisponibles() {
+        return disponibles;
+    }
+
+    public void setDisponibles(int disponibles) {
+        this.disponibles = disponibles;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
     @Override
     public void actionPerformed(ActionEvent ae) {
         
         if(ae.getSource() == botonAñadir){
-        
-            System.out.println(nombrePrecio.getText());
+            
+            if(disponibles>0){
+            
+                Articulo nuevo = new Articulo(nombre, precio);
+                carrito.add(nuevo);
+
+                int precioAcumulado = 0;
+
+                for (int i=0; i < carrito.size(); i++){
+
+                    precioAcumulado = carrito.get(i).getPrecioProducto() + precioAcumulado;
+
+                }
+
+                disponibles--;
+                botonAñadir.setText("" + disponibles + " Disponibles - Añadir");
+                aviso.setText(carrito.size() + " articulos registrados - $ " + precioAcumulado + " - pagar");
+                
+            } else {
+            
+                botonAñadir.setEnabled(false);
+                
+            }
+            
             
         }
     

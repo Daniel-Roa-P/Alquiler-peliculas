@@ -91,7 +91,7 @@ VALUES ('Rapidos y Furiosos 9'
 ,11
 ,18000)
 , ('Kung Fu Panda'
-,'https://static.wikia.nocookie.net/kungfupanda/images/f/ff/Kung-fu-panda-poster.jpg/revision/latest?cb=20120911211015&path-prefix=es'
+,'https://static.wikia.nocookie.net/cine/images/b/be/Kung_Fu_Panda_HA.jpg/revision/latest/top-crop/width/360/height/450?cb=20210422191953'
 ,'El panda Po sueña en convertirse en un maestro del kung-fu. Su sueño se hace una realidad cuando es inesperadamente elegido para cumplir una antigua profecía y debe estudiar artes marciales con sus ídolos, los Cinco Furiosos.'
 ,'Animada'
 ,5
