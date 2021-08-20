@@ -14,6 +14,8 @@ import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -70,8 +72,10 @@ public class Peliculas extends JFrame implements ActionListener {
         scrollFichasExterno.setBounds(20, 100, 1230, 500);
         scrollFichasExterno.setBackground(Color.WHITE);
         
-        scrollFichasInterno.setBounds(0, 0, 1250, 500);
-        scrollFichasInterno.setPreferredSize(new Dimension(1300, 450)); 
+//        scrollFichasInterno.setBounds(0, 0, 1410, 500);
+//        scrollFichasInterno.setPreferredSize(new Dimension(1410, 450)); 
+        scrollFichasInterno.setBounds(0, 0, 10000, 500);
+        scrollFichasInterno.setPreferredSize(new Dimension(10000, 450)); 
         scrollFichasInterno.setBackground(new Color(33, 33, 33));
         
         textoSeleccion.setFont(new Font(Font.MONOSPACED, Font.BOLD, 30));
@@ -81,10 +85,10 @@ public class Peliculas extends JFrame implements ActionListener {
         ventanaInterna.add(textoSeleccion);
         
         categorias.addItem("Acción");
-        categorias.addItem("Terror");
-        categorias.addItem("Comedia");
-        categorias.addItem("Romantico");
         categorias.addItem("Animada");
+        categorias.addItem("Drama");
+        categorias.addItem("Terror");
+        categorias.addItem("Todas");
         
         categorias.setFont(new Font(Font.MONOSPACED, Font.BOLD, 15));
         
@@ -116,46 +120,15 @@ public class Peliculas extends JFrame implements ActionListener {
             
         }
         
-        DBconexion con = new DBconexion();
-        
-        PreparedStatement Statement = con.getConexion().prepareStatement("Select * from peliculas");
-        ResultSet result = Statement.executeQuery();
-        
-        int x = 20;
-        
-        while(result.next()) {
-
-            FichaPelicula p1 = new FichaPelicula();
-            
-            p1.getNombrePrecio().setText(result.getString("nombre"));
-            p1.getDescripcion().setText(result.getString("descripcion"));
-            p1.adpatarImagen(result.getString("urlImagen"));
-            
-            p1.getBotonAñadir().setBackground(Color.CYAN);
-        
-            p1.getNombrePrecio().setBounds(x, 20, 250, 100);
-            p1.getImagen().setBounds(x, 50, 250, 300);
-            p1.getDescripcion().setBounds(x, 340, 250, 100);
-            p1.getBotonAñadir().setBounds(x, 445, 250, 30);
-
-            scrollFichasInterno.add(p1.getBotonAñadir());
-            scrollFichasInterno.add(p1.getImagen());
-            scrollFichasInterno.add(p1.getNombrePrecio());
-            scrollFichasInterno.add(p1.getDescripcion());
-            
-            x = x + 280;
-            
-        }
-        
 //        p1.adpatarImagen("https://spoiler.bolavip.com/__export/1624372370670/sites/bolavip/img/2021/06/22/490827891_contest_1010968_standard_1623951222_crop1624369952765.jpg_72598852.jpg");
 //        p1.getNombrePrecio().setText("Rapidos y Furiosos 9 $10000");
 //        p1.getDescripcion().setText("Dom Toretto vive una vida tranquila junto a Letty y su hijo, pero el peligro siempre regresa a su vida. En esta ocasión, el equipo se enfrenta a un complot mundial orquestado por el asesino más temible del mundo: el hermano de Dom.");
         
 //        FichaPelicula p2 = new FichaPelicula();
 //        
-//        p2.adpatarImagen("https://es.web.img3.acsta.net/pictures/21/03/30/15/41/3645913.jpg");
-//        p2.getNombrePrecio().setText("Escuadron suicida 2 $12000");
-//        p2.getDescripcion().setText("Con tal de salir de una prisión infernal, los supervillanos más peligrosos del mundo aceptan una misión del Gobierno: viajar a una remota isla, enemiga de los Estados Unidos y repleta de soldados, para destruir un laboratorio de alta tecnología.");
+//        p2.adpatarImagen("https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcSN2-ByPB00D1Eg0OVRWhsrrdHluqQwEbDLSMU5zG0s2ostcuqb");
+//        p2.getNombrePrecio().setText("Su Casa $12000");
+//        p2.getDescripcion().setText("Una pareja de refugiados huye de Sudán del Sur, país devastado por la guerra. Ellos luchan por adaptarse a su nueva vida en una ciudad inglesa.");
 //        p2.getBotonAñadir().setBackground(Color.CYAN);
 //        
 //        p2.getNombrePrecio().setBounds(300, 20, 250, 100);
@@ -184,13 +157,114 @@ public class Peliculas extends JFrame implements ActionListener {
 //        scrollFichasInterno.add(p1.getImagen());
 //        scrollFichasInterno.add(p1.getNombrePrecio());
 //        scrollFichasInterno.add(p1.getDescripcion());
-
+        
         ventanaExterna.setViewportView(ventanaInterna);
         scrollFichasExterno.setViewportView(scrollFichasInterno);
-        
+
+        categorias.addActionListener((ActionEvent e) -> {
+            
+            switch (categorias.getSelectedIndex()) {
+                case 0:
+                    
+                    
+                        try {
+                            llenarScroll("SELECT * FROM tienda.peliculas WHERE categoria = 'Accion'");
+                        } catch (SQLException ex) {
+                            System.out.println(ex.getMessage());
+                        }
+                    
+                    
+                    break;
+                case 1:
+                    
+                    System.out.println("bjhfe");
+                    
+                        try {
+                            llenarScroll("SELECT * FROM tienda.peliculas WHERE categoria = 'Animada'");
+                        } catch (SQLException ex) {
+                            System.out.println(ex.getMessage());
+                        }
+                    
+                    break;
+                case 2:
+                    
+                        try {
+                            llenarScroll("SELECT * FROM tienda.peliculas WHERE categoria = 'Drama'");
+                        } catch (SQLException ex) {
+                            System.out.println(ex.getMessage());
+                        }
+                    
+                    break;
+                case 3:
+                    
+                        try {
+                            llenarScroll("SELECT * FROM tienda.peliculas WHERE categoria = 'Terror'");
+                        } catch (SQLException ex) {
+                            System.out.println(ex.getMessage());
+                        }
+                    
+                    break;
+                case 4:
+                    
+                        try {
+                            llenarScroll("SELECT * FROM tienda.peliculas");
+                        } catch (SQLException ex) {
+                            System.out.println(ex.getMessage());
+                        }
+                    
+                    break;
+            
+                default:
+                    break;
+            }
+            
+        });
         
     }
 
+    
+    
+    public void llenarScroll(String clave) throws SQLException{
+    
+        scrollFichasInterno.removeAll();
+        
+        DBconexion con = new DBconexion();
+        
+        PreparedStatement Statement = con.getConexion().prepareStatement(clave);
+        ResultSet result = Statement.executeQuery();
+        
+        int x = 20;
+        
+        while(result.next()) {
+
+            FichaPelicula fp = new FichaPelicula();
+            
+            fp.getNombrePrecio().setText(result.getString("nombre"));
+            fp.getDescripcion().setText(result.getString("descripcion"));
+            fp.adpatarImagen(result.getString("urlImagen"));
+            
+            fp.getBotonAñadir().setBackground(Color.CYAN);
+        
+            fp.getNombrePrecio().setBounds(x, 20, 250, 100);
+            fp.getImagen().setBounds(x, 50, 250, 300);
+            fp.getDescripcion().setBounds(x, 340, 250, 100);
+            fp.getBotonAñadir().setBounds(x, 445, 250, 30);
+
+            scrollFichasInterno.add(fp.getBotonAñadir());
+            scrollFichasInterno.add(fp.getImagen());
+            scrollFichasInterno.add(fp.getNombrePrecio());
+            scrollFichasInterno.add(fp.getDescripcion());
+            
+            x = x + 280;
+            
+        }
+        
+        scrollFichasExterno.setViewportView(scrollFichasInterno);
+        
+//        con.desconectar();
+        
+    }
+    
     @Override
     public void actionPerformed(ActionEvent ae) {
         
