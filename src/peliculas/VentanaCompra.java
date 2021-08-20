@@ -144,18 +144,23 @@ public class VentanaCompra extends JFrame implements ActionListener {
             
             if(verificarExistencia(usuario.getText())){
             
-                crearNuevoUsusario();
+                String id = usuario.getText();
+                
+                actualizarUsuario(id);
                 actualizarPeliculas();
 
                 aviso.setText("0 articulos registrados - $ 0");
                 carrito = new ArrayList();
 
+                JFrame f = new JFrame();   
+                JOptionPane.showMessageDialog(f,"Usuario: " + usuario.getText() + "\nCompra reaalizada por: " + factura + " \nPeliculas llevada: " + nuevasPelis);   
+                
                 dispose();
                 
             } else {
             
                 JFrame f = new JFrame();   
-                JOptionPane.showMessageDialog(f,"El usuario no existe.","Alert",JOptionPane.WARNING_MESSAGE);     
+                JOptionPane.showMessageDialog(f,"El usuario no existe.","Alert",JOptionPane.WARNING_MESSAGE); 
            
             }
             
@@ -169,6 +174,9 @@ public class VentanaCompra extends JFrame implements ActionListener {
                 aviso.setText("0 articulos registrados - $ 0");
                 carrito = new ArrayList();
 
+                JFrame f = new JFrame();   
+                JOptionPane.showMessageDialog(f,"El usuario registrado \nUsuario: " + nuevoUsuario.getText() + "  \nCompra reaalizada por: " + factura + " \nPeliculas llevada: " + nuevasPelis);
+                
                 dispose();
                 
             } else {
