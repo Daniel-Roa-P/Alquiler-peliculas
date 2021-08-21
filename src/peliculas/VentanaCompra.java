@@ -23,6 +23,8 @@ import static peliculas.Peliculas.carrito;
 
 public class VentanaCompra extends JFrame implements ActionListener {
 
+    // inicializo los elementos presentes en la interfaz
+    
     JLabel texto = new JLabel("Articulos a comprar");
     JLabel cuenta = new JLabel("Total a pagar: ");
     JLabel textoUsuario = new JLabel("Ingrese su usuario (Nombre)");
@@ -37,11 +39,15 @@ public class VentanaCompra extends JFrame implements ActionListener {
     JButton botonPagar = new JButton("Alquilar");
     JButton botonRegistrar = new JButton("Registrar y Alquilar");
     
+    // variables en las que se tienen los elementos que el usuario desea adquirir
+    
     int factura;
     String nuevasPelis;
     
     VentanaCompra(){
     
+        //ingreso valores en los elementos presentes en la interfaz
+        
         Container c = getContentPane();
         c.setLayout(null);
         this.getContentPane().setBackground(new Color(33, 33, 33));
@@ -95,6 +101,8 @@ public class VentanaCompra extends JFrame implements ActionListener {
         
     }
     
+    //metodo en el que se muestran los articulos elegidos previamente por el usuario
+    
     void llenarListado(){
         
         scrollListaInterno.removeAll();
@@ -140,7 +148,11 @@ public class VentanaCompra extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
        
+        
+        
         if(ae.getSource() == botonPagar && usuario.getText().length()!= 0 && !carrito.isEmpty()){
+            
+            // condicional usado cuando se desea realizar el alquiler por parte de un usuario existente
             
             if(verificarExistencia(usuario.getText())){
             
@@ -150,6 +162,8 @@ public class VentanaCompra extends JFrame implements ActionListener {
                 actualizarPeliculas();
                 insertarTransaccion(id);
 
+                //actualizacion del carrito 
+                
                 aviso.setText("0 articulos registrados - $ 0");
                 carrito = new ArrayList();
 
@@ -159,7 +173,7 @@ public class VentanaCompra extends JFrame implements ActionListener {
                 dispose();
                 
             } else {
-            
+                
                 JFrame f = new JFrame();   
                 JOptionPane.showMessageDialog(f,"El usuario no existe.","Alert",JOptionPane.WARNING_MESSAGE); 
            
@@ -167,11 +181,15 @@ public class VentanaCompra extends JFrame implements ActionListener {
             
         } else if (ae.getSource() == botonRegistrar && nuevoUsuario.getText().length()!= 0 && !carrito.isEmpty()){
             
+            // condicional usado cuando se desea realizar el alquiler por parte de un usuario nuevo
+            
             if(verificarId(nuevoUsuario.getText())){
             
                 crearNuevoUsusario();
                 actualizarPeliculas();
                 insertarTransaccion(nuevoUsuario.getText());
+                
+                //actualizacion del carrito 
 
                 aviso.setText("0 articulos registrados - $ 0");
                 carrito = new ArrayList();
@@ -196,6 +214,8 @@ public class VentanaCompra extends JFrame implements ActionListener {
         }
         
     }
+    
+    // metodo que registra la transaccion realizada en la ventana de compra en la tabla movimientos
     
     public void insertarTransaccion(String usuario){
         
@@ -223,6 +243,8 @@ public class VentanaCompra extends JFrame implements ActionListener {
         
     }
     
+    // metodo que inserta un nuevo usuario en la tabla de usuarios
+    
     public void crearNuevoUsusario(){
         
         DBconexion con = new DBconexion();
@@ -248,6 +270,8 @@ public class VentanaCompra extends JFrame implements ActionListener {
         con.desconectar();
         
     }
+    
+    // metodo que actualiza la deuda y las peliculas pedidas por un usuario
     
     public void actualizarUsuario(String id){
         
@@ -288,6 +312,8 @@ public class VentanaCompra extends JFrame implements ActionListener {
         con.desconectar();
         
     }
+    
+    // metodo que actualiza la cantidad disponible dela peliculas elegidas en la compra
     
     public void actualizarPeliculas(){
         
@@ -330,6 +356,8 @@ public class VentanaCompra extends JFrame implements ActionListener {
         
     }
 
+    // metodo que que verifica que la PRYMARY KEY de un susario no se encuentre repetida
+    
     boolean verificarId(String id){
         
         DBconexion con = new DBconexion();
@@ -361,6 +389,8 @@ public class VentanaCompra extends JFrame implements ActionListener {
         return true;
         
     }
+    
+    // metodo que que verifica la existencia de un usuario
     
     boolean verificarExistencia(String id){
         
@@ -394,6 +424,8 @@ public class VentanaCompra extends JFrame implements ActionListener {
         
     }
     
+    // clase que contiene los elementos visuales de la lista en donde se muestran los articulos pedidos por el usuario
+    
     class ElementoLista implements ActionListener {
 
         JLabel nombre, precio;
@@ -417,6 +449,8 @@ public class VentanaCompra extends JFrame implements ActionListener {
             botonRetirar.addActionListener(this);
             
         }
+        
+        // listener que retira del carrito una pelicula que el usuario ya no desee agragar a la cuenta final
         
         @Override
         public void actionPerformed(ActionEvent ae) {

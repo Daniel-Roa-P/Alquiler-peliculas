@@ -27,8 +27,12 @@ import javax.swing.WindowConstants;
 
 public class Peliculas extends JFrame implements Runnable, ActionListener {
 
+    //Arraylist que consignara los productos seleccionados por el usuario
+    
     public static ArrayList<Articulo> carrito = new ArrayList();
     public static JLabel aviso = new JLabel("0 articulos registrados - $ 0");
+    
+    // inicializo los elementos presentes en la interfaz
     
     JScrollPane ventanaExterna = new JScrollPane();
     JScrollPane ventanaInterna = new JScrollPane();
@@ -36,18 +40,22 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
     JScrollPane scrollFichasExterno = new JScrollPane();
     JScrollPane scrollFichasInterno = new JScrollPane();
     
-    String instruccion;
-    
     JComboBox categorias = new JComboBox();
     
     JLabel textoSeleccion = new JLabel("Seleccione la categoria deseada");
     
-    Thread dezpliegue;
-    
     JButton botonComprar = new JButton("Pagar");
     JButton botonConsultar = new JButton("Dashboard");
     
+    // hilo con el que se van a desplegar una a una las peliculas en la pantalla para que esta misma no se congele
+    
+    Thread dezpliegue;
+    
+    String instruccion;
+    
     public static void main(String[] args) throws SQLException {
+        
+        //Establecer valores de la interfaz y lanzarla
         
         Peliculas catalogo = new Peliculas(); 
         catalogo.setResizable(false);
@@ -60,6 +68,8 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
 
     Peliculas() throws SQLException{
     
+        //ingreso valores en los elementos presentes en la interfaz
+        
         ventanaInterna.removeAll();
         scrollFichasInterno.removeAll();
         
@@ -119,6 +129,8 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
         
         ventanaInterna.add(categorias);
 
+        //cargo el logotipo de la aplicacion
+        
         String path = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/TV_Azteca_Cinema_logo.svg/2560px-TV_Azteca_Cinema_logo.svg.png";
                     
         try {
@@ -143,14 +155,20 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
             
         }
         
+        //ingreso elementos en un scrollview
+        
         ventanaExterna.setViewportView(ventanaInterna);
         scrollFichasExterno.setViewportView(scrollFichasInterno);
         
+        //se le asigna un listener a un JComboBox con el proposito de cambiar las peliculas dezplegadas en el scrollbar segun la decision del usuario
+        
         categorias.addActionListener((ActionEvent e) -> {
             
-            instruccion="SELECT * FROM tienda.peliculas";
+            instruccion="";
             dezpliegue = new Thread(this);
             scrollFichasInterno.removeAll(); 
+            
+            // segun la opcion elegida se envia una sentecia SQL para realizar una consulta segun los parametros elegidos por el usuario 
             
             switch (categorias.getSelectedIndex()) {
                 case 0:
@@ -194,6 +212,8 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
         
         if(ae.getSource() == botonComprar && !carrito.isEmpty()){
             
+            //abre la ventana para la confirmacion de alquiler si el carrito no se encuentra vacio
+            
             VentanaCompra compra = new VentanaCompra();
             compra.setResizable(false);
             compra.setBounds(0, 0, 420, 720);
@@ -203,9 +223,11 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
             
         } else if (ae.getSource() == botonConsultar){
             
+            //abre el dashboard con el cual se podra consultar la informacion alojada en las bases de datos
+            
             Dashboard db = new Dashboard();
             db.setResizable(false);
-            db.setBounds(0, 0, 820, 720);
+            db.setBounds(0, 0, 900, 720);
             db.setTitle("Comprar articulos");
 
             db.setVisible(true);
@@ -214,6 +236,8 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
         
     }
 
+    //hilo que muestra las peliculas una por una mientras las imagenes de estas cargan se evita que la interfaz se congele
+    
     @Override
     public void run() {
         
@@ -221,15 +245,19 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
             
             try {
         
+                // segun la instruccion elegida por el usuario se lleva el scrollbar con la categoria deseada
+                
                 DBconexion con = new DBconexion();
 
                 PreparedStatement Statement = con.getConexion().prepareStatement(instruccion);
                 ResultSet result = Statement.executeQuery();
 
                 int x = 20;
-                categorias.setEnabled(false);
+                categorias.setEnabled(false); // se bloquea la edicion del JComboBox para evitar errores graficos
                 
                 while(result.next()) {
+                    
+                    // se ingresan los valores internos de los obtetos FichaPelicula
                     
                     FichaPelicula fp = new FichaPelicula();
 
@@ -241,6 +269,8 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
                     fp.adpatarImagen(result.getString("urlImagen"));
                     
                     int cantidadActual = result.getInt("disponibles");
+                    
+                    // ciclo for el cual mantiene actualizadas la cantidad de peliculas desponibles en caso de que se recarge el srollview
                     
                     for(int i = 0; i< carrito.size(); i++){
                         

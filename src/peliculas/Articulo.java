@@ -1,6 +1,8 @@
 
 package peliculas;
 
+//clase que representa los balores basicos de una pelicula a la venta
+
 public class Articulo {
     
     private String nombreProducto;

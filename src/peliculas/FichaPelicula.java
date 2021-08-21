@@ -47,8 +47,10 @@ public class FichaPelicula implements ActionListener {
         
     }
     
-    public void adpatarImagen(String path){
+    //metodo que recupera una imagen apartir de una url proveniente de la base de datos
     
+    public void adpatarImagen(String path){
+        
     try {
             
             URL url = new URL(path);
@@ -120,6 +122,8 @@ public class FichaPelicula implements ActionListener {
         this.nombre = nombre;
     }
     
+    // listener el cual permite añadir elementos al carrito y actualizar la informacion de este segun corresponda la pelicula elegida por el usuario
+    
     @Override
     public void actionPerformed(ActionEvent ae) {
         
@@ -144,6 +148,7 @@ public class FichaPelicula implements ActionListener {
                 
             } else {
             
+                //en caso de quedarse sin unidades disponibles se inhailita el uso del boton
                 botonAñadir.setEnabled(false);
                 
             }

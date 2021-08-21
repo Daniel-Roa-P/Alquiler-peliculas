@@ -37,15 +37,18 @@ public class Dashboard extends JFrame{
         textoSeleccion.setForeground(Color.WHITE);
         textoSeleccion.setBounds(20, 20, 1000, 35);
         
+        //JComboBox que alverga los tipos de consultas que se pueden realizar
+        
         opciones.addItem("Peliculas Alquiladas");
         opciones.addItem("Peliculas Disponibles");
+        opciones.addItem("Deudas de los clientes");
         opciones.addItem("Ultimos Alquileres");
         
         opciones.setFont(new Font(Font.MONOSPACED, Font.BOLD, 15));
         
-        opciones.setBounds(20, 60, 770, 30);
+        opciones.setBounds(20, 60, 850, 30);
 
-        scrollConsultaExterno.setBounds(20, 100, 770, 570);
+        scrollConsultaExterno.setBounds(20, 100, 850, 570);
         
         scrollConsultaInterno.removeAll();
         
@@ -55,6 +58,8 @@ public class Dashboard extends JFrame{
         
         scrollConsultaExterno.setViewportView(scrollConsultaInterno);
 
+        //se le asigna un listener a un JComboBox con el proposito de mostrar en el scrollview el tipo de consulta solicitada
+        
         opciones.addActionListener((ActionEvent e) -> {
             
             switch (opciones.getSelectedIndex()) {
@@ -70,6 +75,12 @@ public class Dashboard extends JFrame{
                     break;
                 case 2:
                         
+                    consultarDeudas();
+                    
+                    break;
+                    
+                case 3:
+                        
                     consultarMovimientos();
                     
                     break;
@@ -81,6 +92,8 @@ public class Dashboard extends JFrame{
         });
         
     }
+    
+    //metodo que muestra las peliculas que se encuentran en manos de un usuario 
     
     void consultarAlquiladas(){
         
@@ -147,6 +160,8 @@ public class Dashboard extends JFrame{
         
     }
     
+    //metodo que muestra la cantidad de unidades que se tienen de cada pelicula
+    
     void consultarDisponibles(){
         
         scrollConsultaInterno.removeAll();
@@ -202,6 +217,8 @@ public class Dashboard extends JFrame{
         scrollConsultaExterno.setViewportView(scrollConsultaInterno);
         
     }
+    
+    //metodo que muestra el historial de transacciones realizado cada vez que se hace una compra
     
     void consultarMovimientos(){
         
@@ -277,6 +294,62 @@ public class Dashboard extends JFrame{
         
         scrollConsultaExterno.setViewportView(scrollConsultaInterno);
         
+    }
+
+    private void consultarDeudas() {
+    
+        scrollConsultaInterno.removeAll();
+        
+        JLabel texto2 = new JLabel("Usuario");
+        JLabel texto3 = new JLabel("Deuda");
+        
+        texto2.setBounds(20,10,500,40);
+        texto2.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
+        texto2.setForeground(Color.WHITE);
+        
+        texto3.setBounds(200,10,500,40);
+        texto3.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
+        texto3.setForeground(Color.WHITE);
+        
+        scrollConsultaInterno.add(texto2);
+        scrollConsultaInterno.add(texto3);
+        
+        DBconexion con = new DBconexion();
+        PreparedStatement Statement;
+        
+        try {
+
+            Statement = con.getConexion().prepareStatement("SELECT * FROM tienda.usuarios");             
+            ResultSet result = Statement.executeQuery();
+
+            int y = 0;
+            
+            while(result.next()) {
+                    
+                JLabel nombre = new JLabel(result.getString("nombre"));
+                JLabel cantidad = new JLabel(String.valueOf(result.getInt("deuda")));
+
+                nombre.setForeground(Color.WHITE);
+                cantidad.setForeground(Color.WHITE);
+
+                cantidad.setBounds(200,40 + y,500,40);
+                nombre.setBounds(20,40 + y,500,40);
+
+                scrollConsultaInterno.add(nombre);
+                scrollConsultaInterno.add(cantidad);
+
+                y = y +30;
+
+            }
+
+        } catch (SQLException ex) {
+
+            System.out.println(ex.getMessage());
+
+        }
+        
+        scrollConsultaExterno.setViewportView(scrollConsultaInterno);
+    
     }
     
 }
