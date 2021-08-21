@@ -205,7 +205,7 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
             
             Dashboard db = new Dashboard();
             db.setResizable(false);
-            db.setBounds(0, 0, 420, 720);
+            db.setBounds(0, 0, 820, 720);
             db.setTitle("Comprar articulos");
 
             db.setVisible(true);

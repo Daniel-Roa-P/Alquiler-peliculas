@@ -43,14 +43,14 @@ public class Dashboard extends JFrame{
         
         opciones.setFont(new Font(Font.MONOSPACED, Font.BOLD, 15));
         
-        opciones.setBounds(20, 60, 370, 30);
+        opciones.setBounds(20, 60, 770, 30);
 
-        scrollConsultaExterno.setBounds(20, 100, 370, 570);
+        scrollConsultaExterno.setBounds(20, 100, 770, 570);
         
         scrollConsultaInterno.removeAll();
         
-        scrollConsultaInterno.setBounds(0, 0, 10000, 500);
-        scrollConsultaInterno.setPreferredSize(new Dimension(350, 2000)); 
+        scrollConsultaInterno.setBounds(0, 0, 2000, 6000);
+        scrollConsultaInterno.setPreferredSize(new Dimension(2000, 6000)); 
         scrollConsultaInterno.setBackground(new Color(33, 33, 33));
         
         scrollConsultaExterno.setViewportView(scrollConsultaInterno);
@@ -70,6 +70,8 @@ public class Dashboard extends JFrame{
                     break;
                 case 2:
                         
+                    consultarMovimientos();
+                    
                     break;
             
                 default:
@@ -186,6 +188,82 @@ public class Dashboard extends JFrame{
 
                 scrollConsultaInterno.add(peli);
                 scrollConsultaInterno.add(cantidad);
+
+                y = y +30;
+
+            }
+
+        } catch (SQLException ex) {
+
+            System.out.println(ex.getMessage());
+
+        }
+        
+        scrollConsultaExterno.setViewportView(scrollConsultaInterno);
+        
+    }
+    
+    void consultarMovimientos(){
+        
+        scrollConsultaInterno.removeAll();
+        
+        JLabel texto2 = new JLabel("ID compra");
+        JLabel texto3 = new JLabel("Cliente");
+        JLabel texto4 = new JLabel("Cuenta");
+        JLabel texto5 = new JLabel("Peliculas pedidas");
+        
+        texto2.setBounds(20,10,500,40);
+        texto2.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
+        texto2.setForeground(Color.WHITE);
+        
+        texto3.setBounds(200,10,500,40);
+        texto3.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
+        texto3.setForeground(Color.WHITE);
+        
+        texto4.setBounds(380,10,500,40);
+        texto4.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
+        texto4.setForeground(Color.WHITE);
+        
+        texto5.setBounds(560,10,500,40);
+        texto5.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
+        texto5.setForeground(Color.WHITE);
+        
+        scrollConsultaInterno.add(texto2);
+        scrollConsultaInterno.add(texto3);
+        scrollConsultaInterno.add(texto4);
+        scrollConsultaInterno.add(texto5);
+        
+        DBconexion con = new DBconexion();
+        PreparedStatement Statement;
+        
+        try {
+
+            Statement = con.getConexion().prepareStatement("SELECT * FROM tienda.movimientos");             
+            ResultSet result = Statement.executeQuery();
+
+            int y = 0;
+            
+            while(result.next()) {
+                    
+                JLabel id = new JLabel(String.valueOf(result.getInt("id")));
+                JLabel cliente = new JLabel(result.getString("nombre"));
+                JLabel cuenta = new JLabel(String.valueOf(result.getInt("cuenta")));
+                JLabel peliculas = new JLabel(result.getString("pedidas"));
+
+                id.setForeground(Color.WHITE);
+                cliente.setForeground(Color.WHITE);
+                cuenta.setForeground(Color.WHITE);
+                peliculas.setForeground(Color.WHITE);
+                
+                id.setBounds(20,40 + y,500,40);
+                cliente.setBounds(200,40 + y,500,40);
+                cuenta.setBounds(380,40 + y,500,40);
+                peliculas.setBounds(560,40 + y,500,40);
+
+                scrollConsultaInterno.add(id);
+                scrollConsultaInterno.add(cliente);
+                scrollConsultaInterno.add(cuenta);
+                scrollConsultaInterno.add(peliculas);
 
                 y = y +30;
 

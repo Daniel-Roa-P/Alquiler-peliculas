@@ -15,6 +15,13 @@ deuda INT(6) NOT NULL,
 prestadas VARCHAR(10000) NOT NULL
 );
 
+CREATE TABLE tienda.movimientos (
+id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+nombre VARCHAR(100) NOT NULL,
+cuenta INT(6) NOT NULL,
+pedidas VARCHAR(10000) NOT NULL
+);
+
 INSERT tienda.peliculas (nombre,urlImagen,descripcion,categoria,disponibles,precio)
 
 VALUES ('Rapidos y Furiosos 9'
@@ -140,6 +147,24 @@ VALUES ('Rapidos y Furiosos 9'
 ,14800);
 
 INSERT tienda.usuarios (nombre,deuda,prestadas)
+
+VALUES ('Andres'
+,29700
+,'1917,Paternidad')
+, 
+('Laura'
+,11000
+,'El conjuro 3')
+,
+('Emil'
+,24000
+,'Rapidos y Furiosos 9,Mortal Kombat,Bad Boys para siempre')
+,
+('Daniel'
+,45600
+,'Zootopia,Shrek,Ratatoille');
+
+INSERT tienda.movimientos (nombre,deuda,prestadas)
 
 VALUES ('Andres'
 ,29700

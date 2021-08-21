@@ -140,7 +140,7 @@ public class VentanaCompra extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ae) {
        
-        if(ae.getSource() == botonPagar && usuario.getText().length()!= 0){
+        if(ae.getSource() == botonPagar && usuario.getText().length()!= 0 && !carrito.isEmpty()){
             
             if(verificarExistencia(usuario.getText())){
             
@@ -148,6 +148,7 @@ public class VentanaCompra extends JFrame implements ActionListener {
                 
                 actualizarUsuario(id);
                 actualizarPeliculas();
+                insertarTransaccion(id);
 
                 aviso.setText("0 articulos registrados - $ 0");
                 carrito = new ArrayList();
@@ -164,12 +165,13 @@ public class VentanaCompra extends JFrame implements ActionListener {
            
             }
             
-        } else if (ae.getSource() == botonRegistrar && nuevoUsuario.getText().length()!= 0){
+        } else if (ae.getSource() == botonRegistrar && nuevoUsuario.getText().length()!= 0 && !carrito.isEmpty()){
             
             if(verificarId(nuevoUsuario.getText())){
             
                 crearNuevoUsusario();
                 actualizarPeliculas();
+                insertarTransaccion(nuevoUsuario.getText());
 
                 aviso.setText("0 articulos registrados - $ 0");
                 carrito = new ArrayList();
@@ -186,7 +188,38 @@ public class VentanaCompra extends JFrame implements ActionListener {
                 
             }
             
+        } else if (carrito.isEmpty()){
+            
+            JFrame f = new JFrame();   
+            JOptionPane.showMessageDialog(f,"La cuenta no puede estar vacia.","Alert",JOptionPane.WARNING_MESSAGE);
+            dispose();
         }
+        
+    }
+    
+    public void insertarTransaccion(String usuario){
+        
+        DBconexion con = new DBconexion();
+        PreparedStatement Statement;
+        
+        try {
+            
+            PreparedStatement pstm = con.getConexion().prepareStatement("insert into movimientos (nombre, "
+                    + " cuenta,"
+                    + " pedidas) "
+                    + " values(?,?,?)");
+            
+            pstm.setString(1, usuario);
+            pstm.setInt(2, factura);
+            pstm.setString(3, nuevasPelis.substring(1, nuevasPelis.length()));
+
+            pstm.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        
+        con.desconectar();
         
     }
     
@@ -389,8 +422,6 @@ public class VentanaCompra extends JFrame implements ActionListener {
         public void actionPerformed(ActionEvent ae) {
             
             if(ae.getSource()== botonRetirar){
-            
-                System.out.println(nombre.getText());
                 
                 int x = 0;
                 
