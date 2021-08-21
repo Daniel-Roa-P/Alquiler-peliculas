@@ -38,7 +38,7 @@ public class Dashboard extends JFrame{
         textoSeleccion.setBounds(20, 20, 1000, 35);
         
         opciones.addItem("Peliculas Alquiladas");
-        opciones.addItem("Peliculas Disponobles");
+        opciones.addItem("Peliculas Disponibles");
         opciones.addItem("Ultimos Alquileres");
         
         opciones.setFont(new Font(Font.MONOSPACED, Font.BOLD, 15));
@@ -65,6 +65,8 @@ public class Dashboard extends JFrame{
                     break;
                 case 1:
 
+                    consultarDisponibles();
+                    
                     break;
                 case 2:
                         
@@ -130,6 +132,62 @@ public class Dashboard extends JFrame{
                     y = y +30;
                     
                 }
+
+            }
+
+        } catch (SQLException ex) {
+
+            System.out.println(ex.getMessage());
+
+        }
+        
+        scrollConsultaExterno.setViewportView(scrollConsultaInterno);
+        
+    }
+    
+    void consultarDisponibles(){
+        
+        scrollConsultaInterno.removeAll();
+        
+        JLabel texto2 = new JLabel("Pelicula");
+        JLabel texto3 = new JLabel("Disponibles");
+        
+        texto2.setBounds(20,10,500,40);
+        texto2.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
+        texto2.setForeground(Color.WHITE);
+        
+        texto3.setBounds(200,10,500,40);
+        texto3.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
+        texto3.setForeground(Color.WHITE);
+        
+        scrollConsultaInterno.add(texto2);
+        scrollConsultaInterno.add(texto3);
+        
+        DBconexion con = new DBconexion();
+        PreparedStatement Statement;
+        
+        try {
+
+            Statement = con.getConexion().prepareStatement("SELECT * FROM tienda.peliculas");             
+            ResultSet result = Statement.executeQuery();
+
+            int y = 0;
+            
+            while(result.next()) {
+                    
+                JLabel peli = new JLabel(result.getString("nombre"));
+                JLabel cantidad = new JLabel(String.valueOf(result.getInt("disponibles")));
+
+                peli.setForeground(Color.WHITE);
+                cantidad.setForeground(Color.WHITE);
+
+                cantidad.setBounds(200,40 + y,500,40);
+                peli.setBounds(20,40 + y,500,40);
+
+                scrollConsultaInterno.add(peli);
+                scrollConsultaInterno.add(cantidad);
+
+                y = y +30;
 
             }
 
