@@ -201,6 +201,15 @@ public class Peliculas extends JFrame implements Runnable, ActionListener {
 
             compra.setVisible(true);
             
+        } else if (ae.getSource() == botonConsultar){
+            
+            Dashboard db = new Dashboard();
+            db.setResizable(false);
+            db.setBounds(0, 0, 420, 720);
+            db.setTitle("Comprar articulos");
+
+            db.setVisible(true);
+            
         }
         
     }
