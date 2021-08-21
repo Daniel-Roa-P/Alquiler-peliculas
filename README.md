@@ -15,7 +15,7 @@ Para la realización de este programa se empleo como motor de base de datos MySQ
   <img width="350" height="150" src="https://raw.githubusercontent.com/DanielAlejandroRoaPalacios/Alquiler-peliculas/main/imagenes/4.PNG">
 </p>
 
-Para poder tener la información a la mano como son los datos del cliente, peliculas y transacciones es necesario correr el script [MySQL_script.sql](https://github.com/DanielAlejandroRoaPalacios/Alquiler-peliculas/blob/main/MySQL%20script.sql) que se ubicado este mismo README pues este creará la base de datos con sus respectivas tablas y datos consignados en estas, tambien al momento de realizar una compra estos son los usuarios predeterminados con los que cuenta la base de datos (El nombre es el PRYMARYKEY)
+Para poder tener la información a la mano como son los datos del cliente, peliculas y transacciones es necesario correr el script [MySQL_script.sql](https://github.com/DanielAlejandroRoaPalacios/Alquiler-peliculas/blob/main/MySQL%20script.sql) que se ubicado este mismo README pues este creará la base de datos con sus respectivas tablas y datos consignados en estas (Preferiblemente en MySQL Workbench 8.0 CE), tambien al momento de realizar una compra estos son los usuarios predeterminados con los que cuenta la base de datos (El nombre es el PRYMARYKEY)
 
 <p align="center">
   <img width="450" height="200" src="https://raw.githubusercontent.com/DanielAlejandroRoaPalacios/Alquiler-peliculas/main/imagenes/5.PNG">
