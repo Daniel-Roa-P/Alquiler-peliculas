@@ -296,6 +296,8 @@ public class Dashboard extends JFrame{
         
     }
 
+    //metodo que muestra las deudas que tiene cada usuario con la tienda
+    
     private void consultarDeudas() {
     
         scrollConsultaInterno.removeAll();
